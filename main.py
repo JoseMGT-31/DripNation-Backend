@@ -17,7 +17,10 @@ app.include_router(support.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://ec2-44-214-169-188.compute-1.amazonaws.com"],
+    allow_origins=[
+        "http://ec2-44-214-169-188.compute-1.amazonaws.com",
+        "http://localhost:5173"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
