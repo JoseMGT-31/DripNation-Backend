@@ -48,3 +48,11 @@ async def update_role(user_id: str, data: RoleUpdate):
         {"$set": {"role": data.role}}
     )
     return {"status": "ok"}
+
+
+@router.delete("/{user_id}")
+async def delete_user(user_id: str):
+    res = await db.users.delete_one({"_id": to_object_id(user_id)})
+    if res.deleted_count == 0:
+        raise HTTPException(404, "User not found")
+    return {"status": "ok"}
