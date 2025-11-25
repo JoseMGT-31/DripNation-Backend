@@ -5,5 +5,5 @@ def support_dict(data) -> dict:
         "email": data.get("email"),
         "motivo": data.get("motivo") if data.get("motivo") else None,
         "solicitud": data.get("solicitud"),
-        "created_at": data.get("created_at"),
+        "created_at": data.get("created_at").isoformat() if data.get("created_at") else None,
     }
