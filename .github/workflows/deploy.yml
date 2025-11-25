@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # o la rama que uses para deploy
+      - main  # rama para deploy
 
 jobs:
   deploy:
@@ -16,20 +16,22 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          chmod 700 ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/github_actions
+          chmod 600 ~/.ssh/github_actions
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
 
       - name: Deploy to EC2
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+          ssh -i ~/.ssh/github_actions -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" << 'EOF'
+          set -e
           cd /var/www/DripNation-Backend
           git pull origin main
           source venv/bin/activate
           pip install -r requirements.txt
           sudo systemctl restart fastapi
           EOF
-        env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
