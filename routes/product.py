@@ -53,7 +53,7 @@ async def get_product(product_id: str):
 async def update_product(product_id: str, data: ProductCreate):
     await db.products.update_one(
         {"_id": to_object_id(product_id)},
-        {"$set": data.dict()}
+        {"$set": data.dict(exclude_none=True)}
     )
     return {"status": "ok"}
 

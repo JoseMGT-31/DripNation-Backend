@@ -3,6 +3,7 @@ def product_dict(data) -> dict:
         "id": str(data["_id"]),
         "name": data["name"],
         "description": data["description"],
+        "category": data.get("category") if data.get("category") else None,
         "price": data["price"],
         "stock": data["stock"],
         "created_at": data.get("created_at"),
