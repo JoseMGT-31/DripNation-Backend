@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
+from fastapi import APIRouter, HTTPException, UploadFile, File, Depends, Body
 from datetime import datetime
 from schemas.product import ProductCreate
 from db import db, to_object_id
@@ -62,3 +62,17 @@ async def update_product(product_id: str, data: ProductCreate):
 async def delete_product(product_id: str):
     await db.products.delete_one({"_id": to_object_id(product_id)})
     return {"status": "deleted"}
+
+
+@router.patch("/{product_id}/stock")
+async def update_product_stock(product_id: str, stock: int = Body(..., embed=True)):
+    result = await db.products.update_one(
+        {"_id": to_object_id(product_id)},
+        {"$set": {"stock": stock}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    # retornar documento actualizado
+    p = await db.products.find_one({"_id": to_object_id(product_id)})
+    return product_dict(p)
